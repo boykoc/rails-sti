@@ -1,0 +1,1 @@
+json.partial! "submitted_timesheets/submitted_timesheet", submitted_timesheet: @submitted_timesheet

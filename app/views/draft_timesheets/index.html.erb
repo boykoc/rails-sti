@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Draft Timesheets</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @draft_timesheets.each do |draft_timesheet| %>
+      <tr>
+        <td><%= link_to 'Show', draft_timesheet %></td>
+        <td><%= link_to 'Edit', edit_draft_timesheet_path(draft_timesheet) %></td>
+        <td><%= link_to 'Destroy', draft_timesheet, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Draft timesheet', new_draft_timesheet_path %>

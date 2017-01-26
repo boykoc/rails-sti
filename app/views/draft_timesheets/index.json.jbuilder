@@ -1,0 +1,1 @@
+json.array! @draft_timesheets, partial: 'draft_timesheets/draft_timesheet', as: :draft_timesheet

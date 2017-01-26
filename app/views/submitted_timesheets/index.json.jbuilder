@@ -1,0 +1,1 @@
+json.array! @submitted_timesheets, partial: 'submitted_timesheets/submitted_timesheet', as: :submitted_timesheet

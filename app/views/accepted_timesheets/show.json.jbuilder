@@ -1,0 +1,1 @@
+json.partial! "accepted_timesheets/accepted_timesheet", accepted_timesheet: @accepted_timesheet

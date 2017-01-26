@@ -1,0 +1,17 @@
+<%= form_for(@accepted_timesheet) do |f| %>
+  <% if @accepted_timesheet.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@accepted_timesheet.errors.count, "error") %> prohibited this accepted_timesheet from being saved:</h2>
+
+      <ul>
+      <% @accepted_timesheet.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
