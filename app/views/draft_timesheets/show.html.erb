@@ -1,4 +1,5 @@
 <p id="notice"><%= notice %></p>
 
+<%= link_to 'Submit', submitted_timesheets_path(submitted_timesheet_id: @draft_timesheet) %> |
 <%= link_to 'Edit', edit_draft_timesheet_path(@draft_timesheet) %> |
 <%= link_to 'Back', draft_timesheets_path %>

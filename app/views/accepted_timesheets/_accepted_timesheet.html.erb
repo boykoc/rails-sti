@@ -1,0 +1,9 @@
+<tr>
+    <td><%= accepted_timesheet.name %></td>
+    <td><%= accepted_timesheet.type %></td>
+    <td><%= accepted_timesheet.updated_at %></td>
+    <td><%= link_to 'Draft', draft_timesheets_path(accepted_timesheet_id: accepted_timesheet), method: :post %></td>
+    <td><%= link_to 'Show', accepted_timesheet %></td>
+    <td><%= link_to 'Edit', edit_accepted_timesheet_path(accepted_timesheet) %></td>
+    <td><%= link_to 'Destroy', accepted_timesheet, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+</tr>

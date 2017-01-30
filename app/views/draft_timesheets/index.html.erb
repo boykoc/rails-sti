@@ -12,6 +12,7 @@
   <tbody>
     <% @draft_timesheets.each do |draft_timesheet| %>
       <tr>
+        <td><%= link_to 'Submit', submitted_timesheets_path(draft_timesheet_id: draft_timesheet), method: :post %></td>
         <td><%= link_to 'Show', draft_timesheet %></td>
         <td><%= link_to 'Edit', edit_draft_timesheet_path(draft_timesheet) %></td>
         <td><%= link_to 'Destroy', draft_timesheet, method: :delete, data: { confirm: 'Are you sure?' } %></td>

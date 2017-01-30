@@ -4,7 +4,7 @@ class AcceptedTimesheetsController < ApplicationController
   # GET /accepted_timesheets
   # GET /accepted_timesheets.json
   def index
-    @accepted_timesheets = AcceptedTimesheet.all
+    @timesheets = Timesheet.all
   end
 
   # GET /accepted_timesheets/1
@@ -40,9 +40,17 @@ class AcceptedTimesheetsController < ApplicationController
   # PATCH/PUT /accepted_timesheets/1
   # PATCH/PUT /accepted_timesheets/1.json
   def update
+    # Set submitted_timesheet if submitted_timesheet_id exists in params.
+    if (params.has_key?(:submitted_timesheet_id))
+      submitted_timesheet = SubmittedTimesheet.find(params[:submitted_timesheet_id])
+      # Replace params with submitted_timesheet attributes.
+      params[:accepted_timesheet] = submitted_timesheet.accept
+    end
     respond_to do |format|
       if @accepted_timesheet.update(accepted_timesheet_params)
-        format.html { redirect_to @accepted_timesheet, notice: 'Accepted timesheet was successfully updated.' }
+        # Destroy the submitted_timesheet if it exists.
+        submitted_timesheet.destroy if submitted_timesheet
+        format.html { redirect_to accepted_timesheets_url, notice: 'Accepted timesheet was successfully updated.' }
         format.json { render :show, status: :ok, location: @accepted_timesheet }
       else
         format.html { render :edit }
@@ -60,26 +68,6 @@ class AcceptedTimesheetsController < ApplicationController
       format.json { head :no_content }
     end
   end
-  
-  # POST /accepted_timesheets/1/draft
-  def draft
-    begin
-      set_accepted_timesheet
-      draft_timesheet = @accepted_timesheet.dup
-      draft_timesheet.becomes!(DraftTimesheet)
-      draft_timesheet.accepted_timesheet_id = @accepted_timesheet.id
-    rescue ActiveRecord::RecordNotFound
-      redirect_to timesheets_path, notice: 'Can\'t make a draft of a draft.'
-      return
-    end
-    respond_to do |format|
-      if draft_timesheet.save
-        format.html { redirect_to draft_timesheets_url, notice: 'Accepted timesheet was converted to DraftTimesheet.' }
-      else
-        format.html { render @draft_timesheet, notice: 'Accepted timesheet was NOT converted to DraftTimesheet.' }
-      end
-    end
-  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -89,6 +77,6 @@ class AcceptedTimesheetsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def accepted_timesheet_params
-      params.fetch(:accepted_timesheet, {})
+      params.require(:accepted_timesheet).permit(:name)
     end
 end

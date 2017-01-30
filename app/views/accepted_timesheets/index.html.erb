@@ -10,13 +10,7 @@
   </thead>
 
   <tbody>
-    <% @accepted_timesheets.each do |accepted_timesheet| %>
-      <tr>
-        <td><%= link_to 'Show', accepted_timesheet %></td>
-        <td><%= link_to 'Edit', edit_accepted_timesheet_path(accepted_timesheet) %></td>
-        <td><%= link_to 'Destroy', accepted_timesheet, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
+    <%= render @timesheets %>
   </tbody>
 </table>
 

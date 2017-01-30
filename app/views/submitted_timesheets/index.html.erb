@@ -12,6 +12,7 @@
   <tbody>
     <% @submitted_timesheets.each do |submitted_timesheet| %>
       <tr>
+        <td><%= link_to 'Accept', accepted_timesheet_path(id: submitted_timesheet.accepted_timesheet_id, submitted_timesheet_id: submitted_timesheet), method: :patch %></td>
         <td><%= link_to 'Show', submitted_timesheet %></td>
         <td><%= link_to 'Edit', edit_submitted_timesheet_path(submitted_timesheet) %></td>
         <td><%= link_to 'Destroy', submitted_timesheet, method: :delete, data: { confirm: 'Are you sure?' } %></td>

@@ -24,11 +24,14 @@ class SubmittedTimesheetsController < ApplicationController
   # POST /submitted_timesheets
   # POST /submitted_timesheets.json
   def create
-    @submitted_timesheet = SubmittedTimesheet.new(submitted_timesheet_params)
-
+    # Get the draft_timesheet.
+    draft_timesheet = DraftTimesheet.find(params[:draft_timesheet_id])
+    # Build a submitted_timesheet.
+    @submitted_timesheet = draft_timesheet.submit
+    # Try to save the submitted_timesheet.
     respond_to do |format|
       if @submitted_timesheet.save
-        format.html { redirect_to @submitted_timesheet, notice: 'Submitted timesheet was successfully created.' }
+        format.html { redirect_to accepted_timesheets_url, notice: 'Submitted timesheet was successfully created.' }
         format.json { render :show, status: :created, location: @submitted_timesheet }
       else
         format.html { render :new }
@@ -42,7 +45,7 @@ class SubmittedTimesheetsController < ApplicationController
   def update
     respond_to do |format|
       if @submitted_timesheet.update(submitted_timesheet_params)
-        format.html { redirect_to @submitted_timesheet, notice: 'Submitted timesheet was successfully updated.' }
+        format.html { redirect_to accepted_timesheets_url, notice: 'Submitted timesheet was successfully updated.' }
         format.json { render :show, status: :ok, location: @submitted_timesheet }
       else
         format.html { render :edit }
@@ -61,27 +64,6 @@ class SubmittedTimesheetsController < ApplicationController
     end
   end
 
-  # POST /submitted_timesheets/1/accept
-  def accept
-    begin
-      set_submitted_timesheet
-      parent_timesheet = @submitted_timesheet.accepted_timesheet
-    rescue ActiveRecord::RecordNotFound
-      redirect_to timesheets_path, notice: 'This original timesheet or submitted timesheet no longer exists.'
-      return
-    end
-    
-    respond_to do |format|
-      if parent_timesheet.update(@submitted_timesheet.attributes.except('id', 'type'))
-        @submitted_timesheet.destroy
-        format.html { redirect_to draft_timesheets_url, notice: 'Submitted timesheet updated AcceptedTimesheet.' }
-      else
-        format.html { render @draft_timesheet, notice: 'Submitted timesheet did NOT updated AcceptedTimesheet.' }
-      end
-    end
-    
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_submitted_timesheet
@@ -90,6 +72,6 @@ class SubmittedTimesheetsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def submitted_timesheet_params
-      params.fetch(:submitted_timesheet, {})
+      params.require(:submitted_timesheet).permit(:name)
     end
 end

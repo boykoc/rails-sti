@@ -24,15 +24,16 @@ class DraftTimesheetsController < ApplicationController
   # POST /draft_timesheets
   # POST /draft_timesheets.json
   def create
-    @draft_timesheet = DraftTimesheet.new(draft_timesheet_params)
-
+    # Get the accepted_timesheet.
+    accepted_timesheet = AcceptedTimesheet.find(params[:accepted_timesheet_id])
+    # Build a draft_timesheet.
+    @draft_timesheet = accepted_timesheet.draft
+    # Try to save the draft_timesheet.
     respond_to do |format|
       if @draft_timesheet.save
-        format.html { redirect_to @draft_timesheet, notice: 'Draft timesheet was successfully created.' }
-        format.json { render :show, status: :created, location: @draft_timesheet }
+        format.html { redirect_to accepted_timesheets_url, notice: 'Accepted timesheet was converted to DraftTimesheet.' }
       else
-        format.html { render :new }
-        format.json { render json: @draft_timesheet.errors, status: :unprocessable_entity }
+        format.html { render @draft_timesheet, notice: 'Accepted timesheet was NOT converted to DraftTimesheet.' }
       end
     end
   end
@@ -42,7 +43,7 @@ class DraftTimesheetsController < ApplicationController
   def update
     respond_to do |format|
       if @draft_timesheet.update(draft_timesheet_params)
-        format.html { redirect_to @draft_timesheet, notice: 'Draft timesheet was successfully updated.' }
+        format.html { redirect_to accepted_timesheets_url, notice: 'Draft timesheet was successfully updated.' }
         format.json { render :show, status: :ok, location: @draft_timesheet }
       else
         format.html { render :edit }
@@ -61,25 +62,6 @@ class DraftTimesheetsController < ApplicationController
     end
   end
   
-  # POST /draft_timesheets/1/submit
-  def submit
-    # Handle exception if drafts already been submitted.
-    begin
-      set_draft_timesheet
-      submitted_timesheet = @draft_timesheet.becomes!(SubmittedTimesheet)
-    rescue ActiveRecord::RecordNotFound
-      redirect_to timesheets_path, notice: 'This draft no longer exists or has already been submitted.'
-      return
-    end
-    respond_to do |format|
-      if submitted_timesheet.save
-        format.html { redirect_to draft_timesheets_url, notice: 'Draft timesheet was converted to SubmittedTimesheet.' }
-      else
-        format.html { render @draft_timesheet, notice: 'Draft timesheet was NOT converted to SubmittedTimesheet.' }
-      end
-    end
-  end
-
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_draft_timesheet
@@ -88,6 +70,6 @@ class DraftTimesheetsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def draft_timesheet_params
-      params.fetch(:draft_timesheet, {})
+      params.require(:draft_timesheet).permit(:name)
     end
 end
